@@ -69,11 +69,56 @@ public class KeiLib {
         return l;
     }
     /**
+     * Read the contents of the file one line at a time and return them in a list.
+     * @param f target file
+     * @return StringList
+     */
+    public static java.util.ArrayList<String> a(java.io.File f){
+        java.util.ArrayList<String> l = new java.util.ArrayList<String>();
+        try (java.io.BufferedReader in = new java.io.BufferedReader(new java.io.FileReader(f))){
+            String line; while((line = in.readLine()) != null) l.add(line);
+        } catch (java.io.IOException e) { e.printStackTrace(); }
+        return l;
+    }
+    /**
      * Return one of the contents of the list at random.
      * @param list List (req size 0 < )
      * @return element
      */
     public static Object a(java.util.List<Object> list){
         return list.get(new java.util.Random().nextInt(list.size()));
+    }
+    /**
+     * Converts to Morse code and returns a string.
+     * @param a base string (req english w/ uppercase)
+     * @return convert morse code string
+     */
+    public static String a(String a){
+        return a.replaceAll("A", "・－")
+                .replaceAll("B", "－・・・")
+                .replaceAll("C", "－・－・")
+                .replaceAll("D", "－・・")
+                .replaceAll("E", "・")
+                .replaceAll("F", "・・－・")
+                .replaceAll("G", "－－・")
+                .replaceAll("H", "・・・・")
+                .replaceAll("I", "・・")
+                .replaceAll("J", "・－－－")
+                .replaceAll("K", "－・－")
+                .replaceAll("L", "・－・・")
+                .replaceAll("M", "－－")
+                .replaceAll("N", "－・")
+                .replaceAll("O", "－－－")
+                .replaceAll("P", "・－－・")
+                .replaceAll("Q", "－－・－")
+                .replaceAll("R", "・－・")
+                .replaceAll("S", "・・・")
+                .replaceAll("T", "－")
+                .replaceAll("U", "・・－")
+                .replaceAll("V", "・・・－")
+                .replaceAll("W", "・－－")
+                .replaceAll("X", "－・・－")
+                .replaceAll("Y", "－・－－")
+                .replaceAll("Z", "－－・・");
     }
 }

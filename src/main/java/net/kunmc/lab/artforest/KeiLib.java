@@ -121,4 +121,12 @@ public class KeiLib {
                 .replaceAll("Y", "－・－－")
                 .replaceAll("Z", "－－・・");
     }
+    /**
+     * Get the blocks under your feet.
+     * @param p target player
+     * @return feet block
+     */
+    public static org.bukkit.block.Block a(org.bukkit.entity.Player p){
+        return p.getLocation().getBlock().getRelative(org.bukkit.block.BlockFace.DOWN);
+    }
 }

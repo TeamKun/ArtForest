@@ -1,0 +1,9 @@
+name: ArtForest
+version: ${project.version}
+main: net.kunmc.lab.artforest.ArtForest
+api-version: 1.15
+loadbefore: [ ArtMap ]
+authors: [ Kei ]
+description: Oekakino mori for minecraft
+commands:
+  af:

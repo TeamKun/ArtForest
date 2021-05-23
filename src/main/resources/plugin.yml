@@ -7,3 +7,4 @@ authors: [ Kei ]
 description: Oekakino mori for minecraft
 commands:
   af:
+    usage: /af

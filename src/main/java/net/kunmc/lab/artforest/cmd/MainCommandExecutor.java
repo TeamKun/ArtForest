@@ -49,6 +49,7 @@ public class MainCommandExecutor implements CommandExecutor {
                 return true;
             } else {
                 KeiLib.sm(sender, "ゲームを開始しました。", "登録単語数: "+ ArtForest.getgm().getWords().size());
+                ArtForest.getgm().Start();
                 return true;
             }
         }

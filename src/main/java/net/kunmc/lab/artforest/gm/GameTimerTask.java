@@ -1,5 +1,6 @@
 package net.kunmc.lab.artforest.gm;
 
+import net.kunmc.lab.artforest.KeiLib;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameTimerTask extends BukkitRunnable {
@@ -26,9 +27,10 @@ public class GameTimerTask extends BukkitRunnable {
         if(!gm.Playing()){
             this.cancel();
         }
-        gm.timenow -= 1;
-        if(gm.timenow <= 0){
+        gm.timenow += 1;
+        if(gm.timenow >= gm.timemax){
             gm.Next();
         }
+        KeiLib.bac("Remain: " + (gm.timemax - gm.timenow));
     }
 }

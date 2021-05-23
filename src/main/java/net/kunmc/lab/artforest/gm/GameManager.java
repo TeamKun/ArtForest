@@ -20,12 +20,15 @@ public class GameManager {
     Player drawer;
     String answer;
     GameTimerTask timer;
-    int timemax = 60*4;
+    int timemax = 60;
     int timenow = 0;
     int count = 0;
+    int playmax = 10;
+    ArtForest plugin;
 
     public GameManager(ArtForest plugin){
         this.status = 0;
+        this.plugin = plugin;
     }
 
     final String wordfile = "word.txt";
@@ -65,10 +68,28 @@ public class GameManager {
     }
 
     public void Next() {
+        if(count >= playmax){
+            End();
+        }
         count++;
-        Player p = (Player) Arrays.asList(Bukkit.getOnlinePlayers().toArray()).get(new Random().nextInt(Bukkit.getOnlinePlayers().size()-1));
-        timenow = timemax;
+        Player p = KeiLib.p1p();
+        timenow = 0;
         drawer = p;
+        answer = words.get(new Random().nextInt(words.size()));
+        if(timer == null) {
+            timer = new GameTimerTask(this);
+            timer.runTaskTimer(this.plugin, 20, 20);
+        }
+        KeiLib.bc("次の書き手は" + p.getName() + "です。");
+        KeiLib.psm(p, "お題は" + answer + "です。");
+    }
 
+    private void End() {
+        count = 0;
+        timenow = 0;
+        drawer = null;
+        answer = null;
+        timer = null;
+        status = 0;
     }
 }

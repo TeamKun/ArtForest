@@ -3,6 +3,7 @@ package net.kunmc.lab.artforest.gm;
 import net.kunmc.lab.artforest.ArtForest;
 import net.kunmc.lab.artforest.KeiLib;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -46,8 +47,9 @@ public class GameManager {
     }
 
     private void giveArtset(Player p){
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give Kei77Hz easel");
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give Kei77Hz canvas");
+        KeiLib.a(p, GameMode.CREATIVE);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " easel");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " canvas");
     }
 
     public int getStatus() {
@@ -82,6 +84,7 @@ public class GameManager {
         }
         KeiLib.bc("次の書き手は" + p.getName() + "です。");
         KeiLib.psm(p, "お題は" + answer + "です。");
+        giveArtset(p);
     }
 
     private void End() {

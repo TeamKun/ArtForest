@@ -213,4 +213,12 @@ public class KeiLib {
     public static void a(java.util.List<org.bukkit.entity.Player> players, org.bukkit.GameMode gm){
         players.forEach(p -> p.setGameMode(gm));
     }
+    /**
+     * Set gamemode a players.
+     * @param p target players.
+     * @param gm gamemode.
+     */
+    public static void a(org.bukkit.entity.Player p, org.bukkit.GameMode gm){
+        p.setGameMode(gm);
+    }
 }

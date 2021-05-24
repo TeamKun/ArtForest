@@ -70,6 +70,15 @@ public class KeiLib {
         return !agc(args, lim+1) && args[lim].equalsIgnoreCase(cmd);
     }
     /**
+     * Ez clear inventory
+     * @param p target player
+     */
+    public static void cinv(org.bukkit.entity.Player p) {
+        org.bukkit.inventory.PlayerInventory inv = p.getInventory();
+        inv.clear();
+        java.util.Arrays.stream(inv.getArmorContents()).forEach(i -> i.setType(org.bukkit.Material.AIR));
+    }
+    /**
      * System.out.println(str);
      * @param str
      */
@@ -122,6 +131,15 @@ public class KeiLib {
      */
     public static void a(String cmd, org.bukkit.command.CommandExecutor executor){
         org.bukkit.Bukkit.getPluginCommand(cmd).setExecutor(executor);
+    }
+    /**
+     * register listener
+     * Use when it's a hassle.
+     * @param listener command name
+     * @param plugin Javaplugin
+     */
+    public static void a(org.bukkit.event.Listener listener, org.bukkit.plugin.java.JavaPlugin plugin){
+        plugin.getServer().getPluginManager().registerEvents(listener, plugin);
     }
     /**
      * Convert arraylist to array

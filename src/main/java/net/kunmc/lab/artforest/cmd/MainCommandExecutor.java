@@ -2,6 +2,8 @@ package net.kunmc.lab.artforest.cmd;
 
 import net.kunmc.lab.artforest.ArtForest;
 import net.kunmc.lab.artforest.KeiLib;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,6 +33,7 @@ public class MainCommandExecutor implements CommandExecutor {
                     ChatColor.RESET + "/af game ゲーム関係のコマンドを表示します。");
             return true;
         }
+
         if(KeiLib.agc(args, 0, "status")){
             KeiLib.sm(sender,"Status: " + ArtForest.getgm().getStatus());
             return true;
@@ -50,6 +53,14 @@ public class MainCommandExecutor implements CommandExecutor {
             } else {
                 KeiLib.sm(sender, "ゲームを開始しました。", "登録単語数: "+ ArtForest.getgm().getWords().size());
                 ArtForest.getgm().Start();
+                return true;
+            }
+        } else if(KeiLib.agc(args, 1, "stop")){
+            if(ArtForest.getgm().Playing()) {
+                ArtForest.getgm().End();
+                return true;
+            } else {
+                KeiLib.sm(sender, "ゲームが開始していません。");
                 return true;
             }
         }

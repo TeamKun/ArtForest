@@ -87,7 +87,7 @@ public class GameManager {
         giveArtset(p);
     }
 
-    private void End() {
+    public void End() {
         count = 0;
         timenow = 0;
         drawer = null;

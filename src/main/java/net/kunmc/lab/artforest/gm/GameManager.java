@@ -1,7 +1,7 @@
 package net.kunmc.lab.artforest.gm;
 
 import net.kunmc.lab.artforest.ArtForest;
-import net.kunmc.lab.artforest.KeiLib;
+import net.kunmc.lab.artforest.Kei;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -40,12 +40,12 @@ public class GameManager {
 
     private void reloadWord(ArtForest plugin) {
         words = new ArrayList<>();
-        words.addAll(KeiLib.a(new File(plugin.getDataFolder() + File.separator + wordfile)));
-        KeiLib.out("words: " + words.size());
+        words.addAll(Kei.a(new File(plugin.getDataFolder() + File.separator + wordfile)));
+        Kei.out("words: " + words.size());
     }
 
     private void giveArtset(Player p){
-        KeiLib.a(p, GameMode.CREATIVE);
+        Kei.a(p, GameMode.CREATIVE);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " easel");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " canvas");
     }
@@ -74,7 +74,7 @@ public class GameManager {
         count++;
         Player p = null;
         int c = 0;
-        while(p == null || c >= 100){ Player cache = KeiLib.p1p(); p = KeiLib.a(GameMode.SPECTATOR, cache) ? cache : null; c++; }
+        while(p == null || c >= 100){ Player cache = Kei.p1p(); p = Kei.a(GameMode.SPECTATOR, cache) ? cache : null; c++; }
         timenow = 0;
         drawer = p;
         answer = words.get(new Random().nextInt(words.size()));
@@ -82,8 +82,8 @@ public class GameManager {
             timer = new GameTimerTask(this);
             timer.runTaskTimer(this.plugin, 20, 20);
         }
-        KeiLib.bc("次の書き手は" + p.getName() + "です。");
-        KeiLib.psm(p, "お題は" + answer + "です。");
+        Kei.bc("次の書き手は" + p.getName() + "です。");
+        Kei.psm(p, "お題は" + answer + "です。");
         giveArtset(p);
     }
 

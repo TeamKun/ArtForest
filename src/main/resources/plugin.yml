@@ -4,6 +4,8 @@ main: net.kunmc.lab.artforest.ArtForest
 api-version: 1.15
 loadbefore: [ ArtMap ]
 authors: [ Kei ]
+depend:
+  - Netherboard
 description: Oekakino mori for minecraft
 commands:
   af:

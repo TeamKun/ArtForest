@@ -239,4 +239,12 @@ public class KeiLib {
     public static void a(org.bukkit.entity.Player p, org.bukkit.GameMode gm){
         p.setGameMode(gm);
     }
+    /**
+     * get gamemode a player.
+     * @param p target players.
+     * @return player gamemode
+     */
+    public static org.bukkit.GameMode gm(org.bukkit.entity.Player p) {
+        return p.getGameMode();
+    }
 }

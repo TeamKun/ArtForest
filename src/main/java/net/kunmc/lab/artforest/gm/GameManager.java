@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -74,7 +72,9 @@ public class GameManager {
             End();
         }
         count++;
-        Player p = KeiLib.p1p();
+        Player p = null;
+        int c = 0;
+        while(p == null || c >= 100){ Player cache = KeiLib.p1p(); p = KeiLib.gm(cache) == GameMode.SPECTATOR ? cache : null; c++; }
         timenow = 0;
         drawer = p;
         answer = words.get(new Random().nextInt(words.size()));

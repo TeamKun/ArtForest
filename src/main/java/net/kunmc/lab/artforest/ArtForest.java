@@ -13,6 +13,7 @@ public final class ArtForest extends JavaPlugin {
     @Override
     public void onEnable() {
         Bukkit.getLogger().info("Minecraft Version: " + KeiLib.a(this));
+        KeiLib.out("\n", KeiLib.manatu810());
         KeiLib.a("af", new MainCommandExecutor(this));
         KeiLib.a(new ChatEventListener(this), this);
 

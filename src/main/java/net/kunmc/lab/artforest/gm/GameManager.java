@@ -74,7 +74,7 @@ public class GameManager {
         count++;
         Player p = null;
         int c = 0;
-        while(p == null || c >= 100){ Player cache = KeiLib.p1p(); p = KeiLib.gm(cache) == GameMode.SPECTATOR ? cache : null; c++; }
+        while(p == null || c >= 100){ Player cache = KeiLib.p1p(); p = KeiLib.a(GameMode.SPECTATOR, cache) ? cache : null; c++; }
         timenow = 0;
         drawer = p;
         answer = words.get(new Random().nextInt(words.size()));

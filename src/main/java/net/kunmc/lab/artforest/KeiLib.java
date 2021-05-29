@@ -86,6 +86,22 @@ public class KeiLib {
         System.out.println(str);
     }
     /**
+     * System.out.println(str);
+     * @param str some obj
+     */
+    public static void out(Object... str){
+        java.util.Arrays.stream(str).forEach(System.out::println);
+    }
+    /**
+     * check player gamemode
+     * @param g target gamemode
+     * @param p player entity
+     * @return true = match
+     */
+    public static boolean a(org.bukkit.GameMode g, org.bukkit.entity.Player p){
+        return p.getGameMode() == g;
+    }
+    /**
      * Get the server version from the JavaPlugin class.
      * @param plugin JavaPlugin class
      * @return NMSVersion (ex v1_8_R1)
@@ -246,5 +262,25 @@ public class KeiLib {
      */
     public static org.bukkit.GameMode gm(org.bukkit.entity.Player p) {
         return p.getGameMode();
+    }
+    /**
+     * return manatsu no yoruno inmu ASCII string list
+     * @return string list
+     */
+    public static java.util.List<String> manatu810(){
+        return java.util.Arrays.asList(
+                "　　　　　__　　　　　　　　　　　　　　 「.|＿_\n" +
+                        "　　 ┌ ┘ト ┐　　　　　　　　　┌'￣　＿ ］ ,'￣｀l 　　　,-─--､\n" +
+                        "　　　´ﾆｺ ｆﾆ｀ ,,──-- ､　　　 _フ l フ-､　,'/| |ヽ|　,‐┐l n .n ｔ'　　 _　 _\n" +
+                        "　　　 | ｆﾆｺ |　　ﾆl l二ﾞｰ'　　　/_┌く /］/　||.∥ .||　￣　|.| |.| |.|　 ,_」 |_| |＿\n" +
+                        "　　　 | ｆﾆｺ |　　| ｆﾆｺ |　,-ー‐､ |.|　ヽ''/　 ||∥　l l /ﾆﾌ」 \"　\" ］ └_､.=┌ '\n" +
+                        "　　　 | ｆﾆｺ |　　| ｆﾆｺ | //l 「ヽ| |.|　/,ﾍ＼ヽ/　.ﾉ |　　,,,'二l l二_　 | fl fl fl |\n" +
+                        "　　＿ﾆ二ﾆ--､ | ｆﾆｺ | || ∥　|| |.|ヽ/　＼ヽ,　 \"\"　,-'/l,-┐,- ､|　ヽ──‐'_\n" +
+                        "　└┐┌┐┌'　ﾌくﾌ「 .||∥　 |.|.l/　　　　｀´　　　　 \"　＿」.L___ 「二二二ﾆ　］\n" +
+                        "　 　 |___|　|__| ／/> く　.|∥　//　　　　　　　　　　　　　ヽ─‐‐┘|」/二ﾆ ﾌ | |\n" +
+                        "　　　　　　　 └／ ヘ＼ヽ'　'''　　　　　　　　　　　　　　　　　　　　/_|<ヽ'/　|/\n" +
+                        "　　　　　　　　　V´　 ＼_フ　　　　　　　　　　　　　　　　　　　　　 ,､／／\n" +
+                        "　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 ヽ／　 ,、"
+        );
     }
 }

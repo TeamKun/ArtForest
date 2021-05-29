@@ -1,14 +1,12 @@
 package net.kunmc.lab.artforest.gm;
 
+import net.kunmc.lab.artforest.ArtForest;
 import net.kunmc.lab.artforest.Kei;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class GameTimerTask extends BukkitRunnable {
-
-    GameManager gm;
-
-    public GameTimerTask(GameManager gm){
-        this.gm = gm;
+public class NewWaveTask extends BukkitRunnable {
+    public NewWaveTask(ArtForest plugin, int c) {
+        count = c;
     }
 
     /**
@@ -22,16 +20,14 @@ public class GameTimerTask extends BukkitRunnable {
      *
      * @see Thread#run()
      */
+    int count = 5;
     @Override
     public void run() {
-        if(!gm.Playing()){
+        if(count <= 0){
+            ArtForest.getgm().Next();
             this.cancel();
         }
-        gm.timenow += 1;
-        if(gm.timenow >= gm.timemax){
-            gm.Wrong();
-            this.cancel();
-        }
-        Kei.bac("Remain: " + (gm.timemax - gm.timenow));
+        Kei.bac("Next: " + count);
+        count--;
     }
 }

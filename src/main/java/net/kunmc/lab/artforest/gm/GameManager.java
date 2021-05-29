@@ -7,15 +7,14 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class GameManager {
 
     int status;
     // 0 lobby
     // 1 ingame
+    // 2 correct
     Player drawer;
     String answer;
     GameTimerTask timer;
@@ -24,10 +23,12 @@ public class GameManager {
     int count = 0;
     int playmax = 10;
     ArtForest plugin;
+    HashMap<UUID, Integer> points;
 
     public GameManager(ArtForest plugin){
         this.status = 0;
         this.plugin = plugin;
+
     }
 
     final String wordfile = "word.txt";
@@ -36,6 +37,11 @@ public class GameManager {
 
     public void init(ArtForest plugin){
         reloadWord(plugin);
+        resetPoints();
+    }
+
+    void resetPoints(){
+        points = new HashMap<>();
     }
 
     private void reloadWord(ArtForest plugin) {
@@ -45,7 +51,8 @@ public class GameManager {
     }
 
     private void giveArtset(Player p){
-        Kei.a(p, GameMode.CREATIVE);
+        Kei.a(p, GameMode.CREATIVE, true, plugin);
+        Kei.cinv(p, false);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " easel");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " canvas");
     }
@@ -71,17 +78,16 @@ public class GameManager {
         if(count >= playmax){
             End();
         }
+        if(status == 2) status = 1;
         count++;
         Player p = null;
-        int c = 0;
-        while(p == null || c >= 100){ Player cache = Kei.p1p(); p = Kei.a(GameMode.SPECTATOR, cache) ? cache : null; c++; }
+        for (int i = 0; i < 100; i++) { Player cache = Kei.p1p(); if(Kei.a(GameMode.SPECTATOR, cache)) { p = cache; break; } }
         timenow = 0;
+        if(p == null) { status = 0; Kei.bc("書き手が見つかりませんでした。"); return; }
         drawer = p;
         answer = words.get(new Random().nextInt(words.size()));
-        if(timer == null) {
-            timer = new GameTimerTask(this);
-            timer.runTaskTimer(this.plugin, 20, 20);
-        }
+        timer = new GameTimerTask(this);
+        timer.runTaskTimer(this.plugin, 20, 20);
         Kei.bc("次の書き手は" + p.getName() + "です。");
         Kei.psm(p, "お題は" + answer + "です。");
         giveArtset(p);
@@ -92,7 +98,63 @@ public class GameManager {
         timenow = 0;
         drawer = null;
         answer = null;
+        timer.cancel();
         timer = null;
         status = 0;
+        Kei.bc("ゲーム終了！");
+        List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(points.entrySet());
+        Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
+        int c = 1;
+        for(Map.Entry<UUID, Integer> entry : list_entries) {
+            Kei.bc(c + "位 " + Bukkit.getPlayer(entry.getKey()).getName() + " " + entry.getValue() + "pts");
+            c++;
+        }
+    }
+
+    public void correct(Player p){
+        status = 2;
+        int c = 10;
+        int l = timemax - timenow;
+        if(points.containsKey(p.getUniqueId())){
+            points.replace(p.getUniqueId(), points.get(p.getUniqueId()) + l);
+        } else {
+            points.put(p.getUniqueId(), l);
+        }
+        if(points.containsKey(drawer.getUniqueId())){
+            points.replace(drawer.getUniqueId(), points.get(drawer.getUniqueId()) + l);
+        } else {
+            points.put(drawer.getUniqueId(), l);
+        }
+        Kei.a(drawer, GameMode.SPECTATOR, true, plugin);
+        Kei.bc("お題は" + answer + "でした。");
+        Kei.bc("正解者は" + p.getName() + "でした。");
+        Kei.bc("正解者,書き手に" + l + "ポイント追加されます。");
+        Kei.bc(c + "秒後に次のゲームが開始します。");
+        if(count >= playmax){
+            End();
+            return;
+        }
+        new NewWaveTask(this.plugin, c).runTaskTimer(this.plugin, 20, 20);
+    }
+
+    public Player getDrawer() {
+        return drawer;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void Wrong() {
+        status = 2;
+        int c = 10;
+        Kei.a(drawer, GameMode.SPECTATOR, true, plugin);
+        Kei.bc("正解者はいませんでした。");
+        Kei.bc(c + "秒後に次のゲームが開始します。");
+        if(count >= playmax){
+            End();
+            return;
+        }
+        new NewWaveTask(this.plugin, c).runTaskTimer(this.plugin, 20, 20);
     }
 }

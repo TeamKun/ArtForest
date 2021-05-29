@@ -9,6 +9,16 @@ public class Kei {
         java.util.Arrays.stream(s).forEach(p::sendMessage);
     }
     /**
+     * clear inventory items
+     * @param p target player
+     * @param armor with armor
+     */
+    public static void cinv(org.bukkit.entity.Player p, boolean armor) {
+        try {  if (armor) { java.util.Arrays.stream(p.getInventory().getContents()).forEach(i -> i.setType(org.bukkit.Material.AIR));
+            } else { java.util.Arrays.stream(p.getInventory().getArmorContents()).forEach(i -> i.setType(org.bukkit.Material.AIR)); }
+        } catch (java.lang.Exception ignored){}
+    }
+    /**
      * Random pick a online player
      * @return pick an online player
      */
@@ -74,9 +84,8 @@ public class Kei {
      * @param p target player
      */
     public static void cinv(org.bukkit.entity.Player p) {
-        org.bukkit.inventory.PlayerInventory inv = p.getInventory();
-        inv.clear();
-        java.util.Arrays.stream(inv.getArmorContents()).forEach(i -> i.setType(org.bukkit.Material.AIR));
+        try{ org.bukkit.inventory.PlayerInventory inv = p.getInventory(); inv.clear(); java.util.Arrays.stream(inv.getArmorContents()).forEach(i -> i.setType(org.bukkit.Material.AIR));
+        } catch (java.lang.Exception ignored){}
     }
     /**
      * System.out.println(str);
@@ -254,6 +263,35 @@ public class Kei {
      */
     public static void a(org.bukkit.entity.Player p, org.bukkit.GameMode gm){
         p.setGameMode(gm);
+    }
+    /**
+     * Set gamemode with async
+     * @param p target players.
+     * @param gm gamemode.
+     * @param bool async
+     */
+    public static void a(org.bukkit.entity.Player p, org.bukkit.GameMode gm, boolean bool, org.bukkit.plugin.java.JavaPlugin plugin){
+        if(bool){
+            new org.bukkit.scheduler.BukkitRunnable() {
+                /**
+                 * When an object implementing interface <code>Runnable</code> is used
+                 * to create a thread, starting the thread causes the object's
+                 * <code>run</code> method to be called in that separately executing
+                 * thread.
+                 * <p>
+                 * The general contract of the method <code>run</code> is that it may
+                 * take any action whatsoever.
+                 *
+                 * @see Thread#run()
+                 */
+                @Override
+                public void run() {
+                    p.setGameMode(gm);
+                }
+            }.runTaskLater(plugin, 1);
+        } else {
+            p.setGameMode(gm);
+        }
     }
     /**
      * get gamemode a player.

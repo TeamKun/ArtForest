@@ -1,0 +1,8 @@
+# 絵を書く回数(ゲーム回数)
+playcount: 10
+# 絵を書く時間
+playtime: 240
+# 次のゲームまでの待機時間
+nexttime: 20
+# ワードが保存してあるファイル
+wordfile: "word.txt"

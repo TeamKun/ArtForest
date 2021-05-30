@@ -43,6 +43,7 @@ public class BoardUpdateTask extends BukkitRunnable {
                     ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
                     ChatColor.RED + " ",
                     ChatColor.YELLOW+ " ",
+                    ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
                     ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
                     ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
                     ChatColor.LIGHT_PURPLE + "");
@@ -55,6 +56,7 @@ public class BoardUpdateTask extends BukkitRunnable {
                             ChatColor.WHITE + "2位 " + Bukkit.getPlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
                             ChatColor.RED + " ",
                             ChatColor.YELLOW+ " ",
+                            ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
                             ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
                             ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
                             ChatColor.LIGHT_PURPLE + "");
@@ -68,6 +70,7 @@ public class BoardUpdateTask extends BukkitRunnable {
                             ChatColor.WHITE + "3位 " + Bukkit.getPlayer(list_entries.get(2).getKey()).getName() + " " + list_entries.get(2).getValue() + "pts",
                             ChatColor.RED + " ",
                             ChatColor.YELLOW+ " ",
+                            ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
                             ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
                             ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
                             ChatColor.LIGHT_PURPLE + "");

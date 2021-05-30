@@ -27,7 +27,7 @@ public class GameManager {
     int count = 0;
     int nextcount = 0;
     int nextmax = 10;
-    int playmax = 10;
+    int playmax;
     ArtForest plugin;
     HashMap<UUID, Integer> points;
 
@@ -41,15 +41,20 @@ public class GameManager {
     public GameManager(ArtForest plugin){
         this.status = 0;
         this.plugin = plugin;
+        this.playmax = plugin.getConfig().getInt("playcount");
+        this.timemax = plugin.getConfig().getInt("playtime");
+        this.nextmax = plugin.getConfig().getInt("nexttime");
 
         this.barrunnable = new BarUpdateTask();
         barrunnable.runTaskTimer(plugin, 2, 2);
 
         this.boardrunnable = new BoardUpdateTask();
         boardrunnable.runTaskTimer(plugin, 20, 20);
+
+        wordfile = plugin.getConfig().getString("wordfile");
     }
 
-    final String wordfile = "word.txt";
+    String wordfile;
     List<String> words;
 
 
@@ -206,7 +211,7 @@ public class GameManager {
                 }
             }
         } else if (status == 2){
-            String title = "残り: "+ (ArtForest.getgm().nextmax - ArtForest.getgm().nextcount)+1 + "秒 書き手: " + drawer.getName() + " お題: " + answer;
+            String title = "残り: "+ (ArtForest.getgm().nextmax - ArtForest.getgm().nextcount + 1) + "秒 書き手: " + drawer.getName() + " お題: " + answer;
             bdrawer.removeAll();
             bplayer.removeAll();
             bnext.setTitle(title);

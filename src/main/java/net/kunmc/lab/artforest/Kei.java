@@ -363,4 +363,10 @@ public class Kei {
     public static void t(org.bukkit.entity.Player p, String main, String sub, int fadein, int stay, int fadeout){
         p.sendTitle(main, sub, fadein, stay, fadeout);
     }
+    /**
+     * first setup
+     */
+    public static void z(org.bukkit.plugin.java.JavaPlugin j) {
+        j.saveDefaultConfig();
+    }
 }

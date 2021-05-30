@@ -4,7 +4,11 @@ import net.kunmc.lab.artforest.ArtForest;
 import net.kunmc.lab.artforest.Kei;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.*;
@@ -21,14 +25,28 @@ public class GameManager {
     int timemax = 60;
     int timenow = 0;
     int count = 0;
+    int nextcount = 0;
+    int nextmax = 10;
     int playmax = 10;
     ArtForest plugin;
     HashMap<UUID, Integer> points;
+
+    BossBar bdrawer;
+    BossBar bplayer;
+    BossBar bnext;
+
+    BukkitRunnable barrunnable;
+    BukkitRunnable boardrunnable;
 
     public GameManager(ArtForest plugin){
         this.status = 0;
         this.plugin = plugin;
 
+        this.barrunnable = new BarUpdateTask();
+        barrunnable.runTaskTimer(plugin, 2, 2);
+
+        this.boardrunnable = new BoardUpdateTask();
+        boardrunnable.runTaskTimer(plugin, 20, 20);
     }
 
     final String wordfile = "word.txt";
@@ -71,6 +89,13 @@ public class GameManager {
 
     public void Start(){
         status = 1;
+        resetPoints();
+        bdrawer = Bukkit.createBossBar("Loading", BarColor.PINK, BarStyle.SEGMENTED_10);
+        bplayer = Bukkit.createBossBar("Loading", BarColor.BLUE, BarStyle.SEGMENTED_10);
+        bnext = Bukkit.createBossBar("Loading", BarColor.WHITE, BarStyle.SOLID);
+        for(Player p : Bukkit.getOnlinePlayers()){
+            points.put(p.getUniqueId(), 0);
+        }
         Next();
     }
 
@@ -78,6 +103,9 @@ public class GameManager {
         if(count >= playmax){
             End();
         }
+
+        bnext.removeAll();
+
         if(status == 2) status = 1;
         count++;
         Player p = null;
@@ -101,6 +129,9 @@ public class GameManager {
         timer.cancel();
         timer = null;
         status = 0;
+        bnext.removeAll();
+        bplayer.removeAll();
+        bdrawer.removeAll();
         Kei.bc("ゲーム終了！");
         List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(points.entrySet());
         Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
@@ -156,5 +187,31 @@ public class GameManager {
             return;
         }
         new NewWaveTask(this.plugin, c).runTaskTimer(this.plugin, 20, 20);
+    }
+
+    public void updateBossbar(){
+        if(status == 1) {
+            String title = "残り: "+ (timemax - timenow) + "秒 書き手: " + drawer.getName() + " お題: %answer%";
+            bdrawer.setProgress(1.0d-((double) timenow / timemax));
+            bplayer.setProgress(1.0d- ((double) timenow / timemax));
+            bdrawer.setTitle(title.replaceAll("%answer%", answer));
+            bplayer.setTitle(title.replaceAll("%answer%", "???"));
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (drawer.getUniqueId().equals(p.getUniqueId())) {
+                    if(bplayer.getPlayers().contains(p)) bplayer.removePlayer(p);
+                    if (!bdrawer.getPlayers().contains(p)) bdrawer.addPlayer(p);
+                } else {
+                    if(bdrawer.getPlayers().contains(p)) bdrawer.removePlayer(p);
+                    if(!bplayer.getPlayers().contains(p)) bplayer.addPlayer(p);
+                }
+            }
+        } else if (status == 2){
+            String title = "残り: "+ (ArtForest.getgm().nextmax - ArtForest.getgm().nextcount)+1 + "秒 書き手: " + drawer.getName() + " お題: " + answer;
+            bdrawer.removeAll();
+            bplayer.removeAll();
+            bnext.setTitle(title);
+            bnext.setProgress(1.0d - ((double) nextcount / nextmax));
+            Bukkit.getOnlinePlayers().forEach(pl -> bnext.addPlayer(pl));
+        }
     }
 }

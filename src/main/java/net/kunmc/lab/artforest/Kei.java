@@ -321,4 +321,46 @@ public class Kei {
                         "　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 ヽ／　 ,、"
         );
     }
+    /**
+     * send title a player.
+     * @param p player
+     * @param main main title
+     * @param sub subtitle
+     */
+    public static void t(org.bukkit.entity.Player p, String main, String sub){
+        p.sendTitle(main, sub, 1, 20, 1);
+    }
+    /**
+     * send title a player.
+     * @param p player
+     * @param main main title
+     * @param sub subtitle
+     * @param fadein fadein
+     */
+    public static void t(org.bukkit.entity.Player p, String main, String sub, int fadein){
+        p.sendTitle(main, sub, fadein, 20, 1);
+    }
+    /**
+     * send title a player.
+     * @param p player
+     * @param main main title
+     * @param sub subtitle
+     * @param fadein fadein
+     * @param stay stay
+     */
+    public static void t(org.bukkit.entity.Player p, String main, String sub, int fadein, int stay){
+        p.sendTitle(main, sub, fadein, stay, 1);
+    }
+    /**
+     * send title a player.
+     * @param p player
+     * @param main main title
+     * @param sub subtitle
+     * @param fadein fadein
+     * @param stay stay
+     * @param fadeout
+     */
+    public static void t(org.bukkit.entity.Player p, String main, String sub, int fadein, int stay, int fadeout){
+        p.sendTitle(main, sub, fadein, stay, fadeout);
+    }
 }

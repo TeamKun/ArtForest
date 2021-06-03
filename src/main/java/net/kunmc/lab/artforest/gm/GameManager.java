@@ -21,7 +21,7 @@ public class GameManager {
     // 0 lobby
     // 1 ingame
     // 2 correct
-    Player drawer;
+    public Player drawer;
     String answer;
     GameTimerTask timer;
     int timemax = 60;

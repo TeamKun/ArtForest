@@ -247,8 +247,8 @@ public class GameManager {
         if(!barrunnable.isCancelled()) barrunnable.cancel();
         if(!boardrunnable.isCancelled()) boardrunnable.cancel();
 
-        bdrawer.removeAll();
-        bplayer.removeAll();
-        bnext.removeAll();
+        if(bdrawer != null) bdrawer.removeAll();
+        if(bplayer != null) bplayer.removeAll();
+        if(bnext != null) bnext.removeAll();
     }
 }

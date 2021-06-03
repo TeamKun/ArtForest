@@ -2,11 +2,15 @@ package net.kunmc.lab.artforest.cmd;
 
 import net.kunmc.lab.artforest.ArtForest;
 import net.kunmc.lab.artforest.Kei;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +46,7 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
             return true;
         }
         if(Kei.agc(args, 0, "game") && Kei.agc(args, 2)){
-            Kei.sm(sender, "/af game start ゲームを開始します。", "/af game stop ゲームを強制終了します。", "/af game words 単語一覧を表示します。");
+            Kei.sm(sender, "/af game start [team] ゲームを開始します。", "/af game stop ゲームを強制終了します。", "/af game words 単語一覧を表示します。");
             return true;
         } else if(Kei.agc(args, 1, "words")){
             Kei.sm(sender, "===========");
@@ -50,10 +54,27 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
             Kei.sm(sender, "===========", "登録単語数: " + ArtForest.getgm().getWords().size());
             return true;
         } else if(Kei.agc(args, 1, "start")){
-            if(ArtForest.getgm().Playing()){
+            if(ArtForest.getgm().Playing()) {
                 Kei.sm(sender, "すでにゲームは開始しています。");
                 return true;
+            } else if(Kei.agc(args, 3)){ // af game start []
+                Kei.sm(sender, "チームを選択してください。");
+                return true;
             } else {
+                ScoreboardManager manager = Bukkit.getScoreboardManager();
+                Scoreboard board = manager.getMainScoreboard();
+                Team team = null;
+                for(Team t : board.getTeams()){
+                    if(t.getName().equals(args[2])) {
+                        team = t;
+                        break;
+                    }
+                }
+                if(team == null){
+                    Kei.sm(sender, "チームが存在しませんでした。");
+                    return true;
+                }
+                ArtForest.getgm().setTeam(team);
                 Kei.sm(sender, "ゲームを開始しました。", "登録単語数: "+ ArtForest.getgm().getWords().size());
                 ArtForest.getgm().Start();
                 return true;

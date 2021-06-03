@@ -4,11 +4,13 @@ import net.kunmc.lab.artforest.ArtForest;
 import net.kunmc.lab.artforest.Kei;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Team;
 
 import java.io.File;
 import java.util.*;
@@ -38,6 +40,8 @@ public class GameManager {
     BukkitRunnable barrunnable;
     BukkitRunnable boardrunnable;
 
+    Team team;
+
     public GameManager(ArtForest plugin){
         this.status = 0;
         this.plugin = plugin;
@@ -57,6 +61,13 @@ public class GameManager {
     String wordfile;
     List<String> words;
 
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
 
     public void init(ArtForest plugin){
         reloadWord(plugin);
@@ -113,8 +124,15 @@ public class GameManager {
 
         if(status == 2) status = 1;
         count++;
-        Player p = null;
-        for (int i = 0; i < 100; i++) { Player cache = Kei.p1p(); if(Kei.a(GameMode.SPECTATOR, cache)) { p = cache; break; } }
+        List<Player> p2 = new ArrayList<>();
+        for (OfflinePlayer player : getTeam().getPlayers()) {
+            if(player.isOnline()) p2.add((Player) player);
+        }
+        if(p2.size() < 1) {
+            status = 0; Kei.bc("書き手が見つかりませんでした。"); return;
+        }
+        Collections.shuffle(p2);
+        Player p = p2.get(0);
         timenow = 0;
         if(p == null) { status = 0; Kei.bc("書き手が見つかりませんでした。"); return; }
         drawer = p;
@@ -149,7 +167,7 @@ public class GameManager {
 
     public void correct(Player p){
         status = 2;
-        int c = 10;
+        int c = plugin.getConfig().getInt("nexttime");
         int l = timemax - timenow;
         if(points.containsKey(p.getUniqueId())){
             points.replace(p.getUniqueId(), points.get(p.getUniqueId()) + l);
@@ -183,7 +201,7 @@ public class GameManager {
 
     public void Wrong() {
         status = 2;
-        int c = 10;
+        int c = plugin.getConfig().getInt("nexttime");
         Kei.a(drawer, GameMode.SPECTATOR, true, plugin);
         Kei.bc("正解者はいませんでした。");
         Kei.bc(c + "秒後に次のゲームが開始します。");

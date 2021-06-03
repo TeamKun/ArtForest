@@ -32,52 +32,7 @@ public class BoardUpdateTask extends BukkitRunnable {
     @Override
     public void run() {
         if(ArtForest.getgm().getStatus() == 1 || ArtForest.getgm().getStatus() == 2){
-            List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(ArtForest.getgm().points.entrySet());
-            Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
-            for(Player p : Bukkit.getOnlinePlayers()){
-                if(list_entries.size() < 2) {
-                    ScoreboardUtil.unrankedSidebarDisplay(p,
-                            "お絵かきの森",
-                    ChatColor.GREEN + " ",
-                    ChatColor.GREEN + "現在の順位:",
-                    ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
-                    ChatColor.RED + " ",
-                    ChatColor.YELLOW+ " ",
-                    ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
-                    ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
-                    ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
-                    ChatColor.LIGHT_PURPLE + "");
-                } else if(list_entries.size() < 3){
-                    ScoreboardUtil.unrankedSidebarDisplay(p,
-                            "お絵かきの森",
-                            ChatColor.GREEN + " ",
-                            ChatColor.GREEN + "現在の順位:",
-                            ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
-                            ChatColor.WHITE + "2位 " + Bukkit.getPlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
-                            ChatColor.RED + " ",
-                            ChatColor.YELLOW+ " ",
-                            ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
-                            ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
-                            ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
-                            ChatColor.LIGHT_PURPLE + "");
-                } else {
-                    ScoreboardUtil.unrankedSidebarDisplay(p,
-                            "お絵かきの森",
-                            ChatColor.GREEN + " ",
-                            ChatColor.GREEN + "現在の順位:",
-                            ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
-                            ChatColor.WHITE + "2位 " + Bukkit.getPlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
-                            ChatColor.WHITE + "3位 " + Bukkit.getPlayer(list_entries.get(2).getKey()).getName() + " " + list_entries.get(2).getValue() + "pts",
-                            ChatColor.RED + " ",
-                            ChatColor.YELLOW+ " ",
-                            ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
-                            ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
-                            ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
-                            ChatColor.LIGHT_PURPLE + "");
-                }
-            }
-        } else if(ArtForest.getgm().getStatus() == 0){
-
+            update();
         }
     }
 
@@ -88,5 +43,52 @@ public class BoardUpdateTask extends BukkitRunnable {
             if(list_entries.get(i).getKey() == uid) return i+1;
         }
         return 0;
+    }
+
+    void update(){
+        List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(ArtForest.getgm().points.entrySet());
+        Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
+        for(Player p : Bukkit.getOnlinePlayers()){
+            if(list_entries.size() < 2) {
+                ScoreboardUtil.unrankedSidebarDisplay(p,
+                        "お絵かきの森",
+                        ChatColor.GREEN + " ",
+                        ChatColor.GREEN + "現在の順位:",
+                        ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
+                        ChatColor.RED + " ",
+                        ChatColor.YELLOW+ " ",
+                        ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
+                        ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
+                        ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
+                        ChatColor.LIGHT_PURPLE + "");
+            } else if(list_entries.size() < 3){
+                ScoreboardUtil.unrankedSidebarDisplay(p,
+                        "お絵かきの森",
+                        ChatColor.GREEN + " ",
+                        ChatColor.GREEN + "現在の順位:",
+                        ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
+                        ChatColor.WHITE + "2位 " + Bukkit.getPlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
+                        ChatColor.RED + " ",
+                        ChatColor.YELLOW+ " ",
+                        ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
+                        ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
+                        ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
+                        ChatColor.LIGHT_PURPLE + "");
+            } else {
+                ScoreboardUtil.unrankedSidebarDisplay(p,
+                        "お絵かきの森",
+                        ChatColor.GREEN + " ",
+                        ChatColor.GREEN + "現在の順位:",
+                        ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
+                        ChatColor.WHITE + "2位 " + Bukkit.getPlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
+                        ChatColor.WHITE + "3位 " + Bukkit.getPlayer(list_entries.get(2).getKey()).getName() + " " + list_entries.get(2).getValue() + "pts",
+                        ChatColor.RED + " ",
+                        ChatColor.YELLOW+ " ",
+                        ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
+                        ChatColor.WHITE + "あなたの順位: " + getV(p.getUniqueId()) + "位",
+                        ChatColor.WHITE + "あなたのポイント: " + ArtForest.getgm().points.get(p.getUniqueId()) + "pts",
+                        ChatColor.LIGHT_PURPLE + "");
+            }
+        }
     }
 }

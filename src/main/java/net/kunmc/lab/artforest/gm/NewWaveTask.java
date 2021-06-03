@@ -28,7 +28,6 @@ public class NewWaveTask extends BukkitRunnable {
             ArtForest.getgm().Next();
             this.cancel();
         }
-        Kei.bac("Next: " + (ArtForest.getgm().nextmax - ArtForest.getgm().nextcount));
         ArtForest.getgm().nextcount += 1;
     }
 }

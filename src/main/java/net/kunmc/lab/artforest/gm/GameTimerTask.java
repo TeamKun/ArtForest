@@ -32,6 +32,5 @@ public class GameTimerTask extends BukkitRunnable {
             gm.Wrong();
             this.cancel();
         }
-        Kei.bac("Remain: " + (gm.timemax - gm.timenow));
     }
 }

@@ -50,6 +50,21 @@ public class Kei {
         public static org.bukkit.DyeColor white = org.bukkit.DyeColor.WHITE;
     }
     /**
+     * Ez itemstack gen
+     * @param m material
+     */
+    public static org.bukkit.inventory.ItemStack i(org.bukkit.Material m) {
+        return new org.bukkit.inventory.ItemStack(m);
+    }
+    /**
+     * Ez give
+     * @param p player
+     * @param i item
+     */
+    public static void give(org.bukkit.entity.Player p, org.bukkit.inventory.ItemStack i) {
+        p.getInventory().addItem(i);
+    }
+    /**
      * Ez sender send message
      * @param p target player
      * @param s messages

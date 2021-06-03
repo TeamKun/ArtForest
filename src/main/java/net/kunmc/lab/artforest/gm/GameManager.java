@@ -4,6 +4,7 @@ import net.kunmc.lab.artforest.ArtForest;
 import net.kunmc.lab.artforest.Kei;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -39,6 +40,8 @@ public class GameManager {
 
     BukkitRunnable barrunnable;
     BukkitRunnable boardrunnable;
+
+    public UUID draweruidcache;
 
     Team team;
 
@@ -89,6 +92,8 @@ public class GameManager {
         Kei.cinv(p, false);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " easel");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " canvas");
+
+        Kei.give(p, Kei.i(Material.RED_DYE));
     }
 
     public int getStatus() {
@@ -236,5 +241,14 @@ public class GameManager {
             bnext.setProgress(1.0d - ((double) nextcount / nextmax));
             Bukkit.getOnlinePlayers().forEach(pl -> bnext.addPlayer(pl));
         }
+    }
+
+    public void clearBoss() {
+        if(!barrunnable.isCancelled()) barrunnable.cancel();
+        if(!boardrunnable.isCancelled()) boardrunnable.cancel();
+
+        bdrawer.removeAll();
+        bplayer.removeAll();
+        bnext.removeAll();
     }
 }

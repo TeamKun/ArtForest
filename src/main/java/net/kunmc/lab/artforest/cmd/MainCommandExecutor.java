@@ -37,7 +37,8 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
         if(Kei.pexc(sender)) return true;
         if(Kei.agc(args, 1)){
             Kei.sm(sender,ChatColor.RESET + "/af status 現在のゲーム状況を表示します。",
-                    ChatColor.RESET + "/af game ゲーム関係のコマンドを表示します。");
+                    ChatColor.RESET + "/af game ゲーム関係のコマンドを表示します。",
+                    ChatColor.RESET + "/af config コンフィグ関係のコマンドを表示します。");
             return true;
         }
 
@@ -79,14 +80,22 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
                 ArtForest.getgm().Start();
                 return true;
             }
-        } else if(Kei.agc(args, 1, "stop")){
-            if(ArtForest.getgm().Playing()) {
+        } else if(Kei.agc(args, 1, "stop")) {
+            if (ArtForest.getgm().Playing()) {
                 ArtForest.getgm().End();
                 return true;
             } else {
                 Kei.sm(sender, "ゲームが開始していません。");
                 return true;
             }
+        } else if(Kei.agc(args, 0, "config") && Kei.agc(args, 2)){
+            Kei.sm(sender, "/af config check 設定内容を表示します。");
+            return true;
+        } else if(Kei.agc(args, 1, "check")){
+            Kei.sm(sender, "===========");
+            ArtForest.getgm().getWords().forEach(s -> Kei.sm(sender,s));
+            Kei.sm(sender, "===========");
+            return true;
         } else {
             Kei.sm(sender, "/af game start ゲームを開始します。", "/af game stop ゲームを強制終了します。", "/af game words 単語一覧を表示します。");
             return true;

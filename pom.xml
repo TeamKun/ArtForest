@@ -63,7 +63,7 @@
                                     <type>${project.packaging}</type>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>C:\Users\user\Desktop\minecraft\artmapserver\plugins</outputDirectory>
+                            <outputDirectory>DIR</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

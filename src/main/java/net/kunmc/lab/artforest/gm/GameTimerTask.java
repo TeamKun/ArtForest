@@ -1,5 +1,6 @@
 package net.kunmc.lab.artforest.gm;
 
+import net.kunmc.lab.artforest.ArtForest;
 import net.kunmc.lab.artforest.Kei;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -27,6 +28,7 @@ public class GameTimerTask extends BukkitRunnable {
         if(!gm.Playing()){
             this.cancel();
         }
+        ArtForest.getgm().updateBossbar();
         gm.timenow += 1;
         if(gm.timenow >= gm.timemax){
             gm.Wrong();

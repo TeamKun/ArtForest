@@ -20,7 +20,7 @@ public final class ArtForest extends JavaPlugin {
         Kei.a(new ChatEventListener(this), this);
         Kei.a(new JoinEventListener(this), this);
         Kei.a(new QuitEventListener(this), this);
-        Kei.a(new Test(this), this);
+        //Kei.a(new Test(this), this);
 
         gm = new GameManager(this);
         gm.init(this);

@@ -36,7 +36,7 @@ public class BoardUpdateTask extends BukkitRunnable {
         }
     }
 
-    int getV(UUID uid){
+    static int getV(UUID uid){
         List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(ArtForest.getgm().points.entrySet());
         Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
         for (int i = 0; i < list_entries.size(); i++) {
@@ -45,7 +45,7 @@ public class BoardUpdateTask extends BukkitRunnable {
         return 0;
     }
 
-    void update(){
+    static void update(){
         List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(ArtForest.getgm().points.entrySet());
         Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
         for(Player p : Bukkit.getOnlinePlayers()){
@@ -54,7 +54,7 @@ public class BoardUpdateTask extends BukkitRunnable {
                         "お絵かきの森",
                         ChatColor.GREEN + " ",
                         ChatColor.GREEN + "現在の順位:",
-                        ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
+                        ChatColor.WHITE + "1位 " + Bukkit.getOfflinePlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
                         ChatColor.RED + " ",
                         ChatColor.YELLOW+ " ",
                         ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
@@ -66,8 +66,8 @@ public class BoardUpdateTask extends BukkitRunnable {
                         "お絵かきの森",
                         ChatColor.GREEN + " ",
                         ChatColor.GREEN + "現在の順位:",
-                        ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
-                        ChatColor.WHITE + "2位 " + Bukkit.getPlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
+                        ChatColor.WHITE + "1位 " + Bukkit.getOfflinePlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
+                        ChatColor.WHITE + "2位 " + Bukkit.getOfflinePlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
                         ChatColor.RED + " ",
                         ChatColor.YELLOW+ " ",
                         ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,
@@ -79,9 +79,9 @@ public class BoardUpdateTask extends BukkitRunnable {
                         "お絵かきの森",
                         ChatColor.GREEN + " ",
                         ChatColor.GREEN + "現在の順位:",
-                        ChatColor.WHITE + "1位 " + Bukkit.getPlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
-                        ChatColor.WHITE + "2位 " + Bukkit.getPlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
-                        ChatColor.WHITE + "3位 " + Bukkit.getPlayer(list_entries.get(2).getKey()).getName() + " " + list_entries.get(2).getValue() + "pts",
+                        ChatColor.WHITE + "1位 " + Bukkit.getOfflinePlayer(list_entries.get(0).getKey()).getName() + " " + list_entries.get(0).getValue() + "pts",
+                        ChatColor.WHITE + "2位 " + Bukkit.getOfflinePlayer(list_entries.get(1).getKey()).getName() + " " + list_entries.get(1).getValue() + "pts",
+                        ChatColor.WHITE + "3位 " + Bukkit.getOfflinePlayer(list_entries.get(2).getKey()).getName() + " " + list_entries.get(2).getValue() + "pts",
                         ChatColor.RED + " ",
                         ChatColor.YELLOW+ " ",
                         ChatColor.WHITE + "ゲーム回数: " + ArtForest.getgm().count + " / " + ArtForest.getgm().playmax,

@@ -17,6 +17,6 @@ public class BarUpdateTask extends BukkitRunnable {
      */
     @Override
     public void run() {
-        ArtForest.getgm().updateBossbar();
+
     }
 }

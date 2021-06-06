@@ -11,6 +11,8 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Team;
 
@@ -166,25 +168,31 @@ public class GameManager {
     private void giveArtset(Player p){
         Kei.a(p, GameMode.CREATIVE, true, plugin);
         Kei.cinv(p, false);
+        p.getInventory().clear();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " easel");
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "art give " + p.getName() + " canvas");
 
-        Kei.give(p, Kei.i(dyematerial.black));
-        Kei.give(p, Kei.i(dyematerial.blue));
-        Kei.give(p, Kei.i(dyematerial.bluelight));
-        Kei.give(p, Kei.i(dyematerial.brown));
-        Kei.give(p, Kei.i(dyematerial.gray));
-        Kei.give(p, Kei.i(dyematerial.cyan));
-        Kei.give(p, Kei.i(dyematerial.graylight));
-        Kei.give(p, Kei.i(dyematerial.green));
-        Kei.give(p, Kei.i(dyematerial.lime));
-        Kei.give(p, Kei.i(dyematerial.magenta));
-        Kei.give(p, Kei.i(dyematerial.orange));
-        Kei.give(p, Kei.i(dyematerial.pink));
-        Kei.give(p, Kei.i(dyematerial.purple));
-        Kei.give(p, Kei.i(dyematerial.red));
-        Kei.give(p, Kei.i(dyematerial.white));
-        Kei.give(p, Kei.i(dyematerial.yellow));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Kei.give(p, Kei.i(Material.INK_SAC));
+                Kei.give(p, Kei.i(dyematerial.blue));
+                Kei.give(p, Kei.i(dyematerial.bluelight));
+                Kei.give(p, Kei.i(Material.COCOA_BEANS));
+                Kei.give(p, Kei.i(dyematerial.gray));
+                Kei.give(p, Kei.i(dyematerial.cyan));
+                Kei.give(p, Kei.i(dyematerial.graylight));
+                Kei.give(p, Kei.i(dyematerial.green));
+                Kei.give(p, Kei.i(dyematerial.lime));
+                Kei.give(p, Kei.i(dyematerial.magenta));
+                Kei.give(p, Kei.i(dyematerial.orange));
+                Kei.give(p, Kei.i(dyematerial.pink));
+                Kei.give(p, Kei.i(dyematerial.purple));
+                Kei.give(p, Kei.i(dyematerial.red));
+                Kei.give(p, Kei.i(Material.BONE_MEAL));
+                Kei.give(p, Kei.i(dyematerial.yellow));
+            }
+        }.runTaskLater(plugin, 3); //ちょっと遅らせないとおかしくなるっぽい
     }
 
     public int getStatus() {
@@ -208,6 +216,7 @@ public class GameManager {
         for(Player p : Bukkit.getOnlinePlayers()){
             points.put(p.getUniqueId(), 0);
         }
+        Bukkit.getOnlinePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 100, true)));
         Next();
     }
 
@@ -252,6 +261,8 @@ public class GameManager {
         bplayer.removeAll();
         bdrawer.removeAll();
         Kei.bc("ゲーム終了！");
+        Bukkit.getOnlinePlayers().forEach(player -> player.removePotionEffect(PotionEffectType.INVISIBILITY));
+        BoardUpdateTask.update();
         List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(points.entrySet());
         Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
         int c = 1;
@@ -276,7 +287,7 @@ public class GameManager {
             points.put(drawer.getUniqueId(), l);
         }
         Kei.a(drawer, GameMode.SPECTATOR, true, plugin);
-        Bukkit.getOnlinePlayers().forEach(p2 -> Kei.t(p2, cc.aqua + "正解は" + answer + "！", "正解者: " + p.getName(), 10, 50));
+        Bukkit.getOnlinePlayers().forEach(p2 -> Kei.t(p2, cc.aqua + "正解は" + answer + "！", "正解者: " + p.getName(), 20, 120, 20));
         Bukkit.getOnlinePlayers().forEach(p2 -> sound.levelup(p2, 1));
         Kei.bc("お題は" + answer + "でした。");
         Kei.bc("正解者は" + p.getName() + "でした。");
@@ -301,7 +312,7 @@ public class GameManager {
         status = 2;
         int c = plugin.getConfig().getInt("nexttime");
         Kei.a(drawer, GameMode.SPECTATOR, true, plugin);
-        Bukkit.getOnlinePlayers().forEach(p -> Kei.t(p, cc.aqua + "時間切れ！", "正解者はいませんでした", 10, 50));
+        Bukkit.getOnlinePlayers().forEach(p -> Kei.t(p, cc.aqua + "時間切れ！", "正解者はいませんでした", 20, 120, 20));
         Bukkit.getOnlinePlayers().forEach(p2 -> sound.levelup(p2, 1));
         Kei.bc("正解者はいませんでした。");
         Kei.bc(c + "秒後に次のゲームが開始します。");
@@ -329,7 +340,7 @@ public class GameManager {
                 }
             }
         } else if (status == 2){
-            String title = "残り: "+ (ArtForest.getgm().nextmax - ArtForest.getgm().nextcount + 1) + "秒 書き手: " + drawer.getName() + " お題: " + answer;
+            String title = "残り: "+ (ArtForest.getgm().nextmax - ArtForest.getgm().nextcount) + "秒 書き手: " + drawer.getName() + " お題: " + answer;
             bdrawer.removeAll();
             bplayer.removeAll();
             bnext.setTitle(title);

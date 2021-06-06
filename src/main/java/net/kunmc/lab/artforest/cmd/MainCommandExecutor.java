@@ -11,13 +11,17 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MainCommandExecutor implements CommandExecutor, TabCompleter {
+    ArtForest plugin;
     public MainCommandExecutor(ArtForest artForest) {
+        this.plugin = artForest;
     }
 
     /**
@@ -89,15 +93,58 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
                 return true;
             }
         } else if(Kei.agc(args, 0, "config") && Kei.agc(args, 2)){
-            Kei.sm(sender, "/af config check 設定内容を表示します。");
+            Kei.sm(sender, "/af config check 設定内容を表示します。",
+                    "/af config nexttime [int] 次のゲームまでの待機時間を設定します",
+            "/af config playtime [int] 絵を書く時間を設定します",
+            "/af config playcount [int] 絵を書く回数(ゲーム回数)を設定します");
             return true;
-        } else if(Kei.agc(args, 1, "check")){
-            Kei.sm(sender, "===========");
-            ArtForest.getgm().getWords().forEach(s -> Kei.sm(sender,s));
-            Kei.sm(sender, "===========");
+        } else if(Kei.agc(args, 1, "check")) {
+            Kei.sm(sender,
+                    "===========",
+                    "nexttime: " + plugin.getConfig().get("nexttime"),
+                    "playtime: " + plugin.getConfig().get("playtime"),
+                    "playcount: " + plugin.getConfig().get("playcount"),
+                    "===========",
+                    "nexttime: 次のゲームまでの待機時間",
+                    "playtime: 絵を書く時間",
+                    "playcount: 絵を書く回数(ゲーム回数)",
+                    "===========");
+            return true;
+        } else if(Kei.agc(args, 1, "nexttime")) {
+            try {
+                Integer i = Integer.parseInt(args[2]);
+                plugin.getConfig().set("nexttime", i);
+                plugin.saveConfig();
+                Kei.sm(sender, "nexttimeを" + i + "に変更しました。");
+            } catch (Exception ex){
+                Kei.sm(sender, "第二引数には数値(整数)を入力してください。");
+            }
+            return true;
+        } else if(Kei.agc(args, 1, "playtime")) {
+            try {
+                Integer i = Integer.parseInt(args[2]);
+                plugin.getConfig().set("playtime", i);
+                plugin.saveConfig();
+                Kei.sm(sender, "playtimeを" + i + "に変更しました。");
+            } catch (Exception ex){
+                Kei.sm(sender, "第二引数には数値(整数)を入力してください。");
+            }
+            return true;
+        } else if(Kei.agc(args, 1, "playcount")) {
+            try {
+                Integer i = Integer.parseInt(args[2]);
+                plugin.getConfig().set("playcount", i);
+                plugin.saveConfig();
+                Kei.sm(sender, "playcountを" + i + "に変更しました。");
+            } catch (Exception ex){
+                Kei.sm(sender, "第二引数には数値(整数)を入力してください。");
+            }
             return true;
         } else {
-            Kei.sm(sender, "/af game start ゲームを開始します。", "/af game stop ゲームを強制終了します。", "/af game words 単語一覧を表示します。");
+            Kei.sm(sender, "/af config check 設定内容を表示します。",
+                    "/af config nexttime [int] 次のゲームまでの待機時間を設定します",
+                    "/af config playtime [int] 絵を書く時間を設定します",
+                    "/af config playcount [int] 絵を書く回数(ゲーム回数)を設定します");
             return true;
         }
     }
@@ -117,20 +164,45 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
      */
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if(Kei.agc(args, 1)){
-            return Arrays.asList("game", "status");
+            return Arrays.asList("game", "status", "config");
         } else if(Kei.agc(args, 2)){
             List<String> r = new ArrayList<>();
-            for(String s : Arrays.asList("game", "status")){
+            for(String s : Arrays.asList("game", "status", "config")){
                 if(s.startsWith(args[0])) r.add(s);
             }
             return r;
         } else if(Kei.agc(args, 3)){
-            List<String> r = new ArrayList<>();
-            for (String s : Arrays.asList("start", "stop", "words")) {
-                if (s.startsWith(args[1])) r.add(s);
+            if(args[0].equals("game")) {
+                List<String> r = new ArrayList<>();
+                for (String s : Arrays.asList("start", "stop", "words")) {
+                    if (s.startsWith(args[1])) r.add(s);
+                }
+                return r;
+            } else if(args[0].equals("config")){
+                List<String> r = new ArrayList<>();
+                for (String s : Arrays.asList("check", "nexttime", "playtime", "playcount")) {
+                    if (s.startsWith(args[1])) r.add(s);
+                }
+                return r;
             }
-            return r;
+        } else if(Kei.agc(args, 4)){
+            if(args[0].equals("game")){
+                if(args[1].equals("start")){
+                    List<String> r = new ArrayList<>();
+                    List<String> a = new ArrayList<>();
+                    Bukkit.getScoreboardManager().getMainScoreboard().getTeams().forEach(t -> a.add(t.getName()));
+                    for (String s : a) {
+                        if (s.startsWith(args[2])) r.add(s);
+                    }
+                    return r;
+                }
+            } else if(args[0].equals("config")){
+                if(args[1].equals("nexttime") || args[1].equals("playtime") || args[1].equals("playcount")) {
+                    if(args.length < 4) // /af config XX [int]
+                    return Collections.singletonList("[int]");
+                }
+            }
         }
-        return null;
+        return Collections.singletonList("");
     }
 }

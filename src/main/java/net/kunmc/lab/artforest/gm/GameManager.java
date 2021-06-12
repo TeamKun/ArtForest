@@ -92,8 +92,19 @@ public class GameManager {
         private static org.bukkit.Material white = org.bukkit.Material.WHITE_DYE;
         private static org.bukkit.Material purple = org.bukkit.Material.PURPLE_DYE;
     }
+
     private static class sound {
-        private static void levelup(org.bukkit.entity.Player p, int vol){p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, vol, 0f);}
+        private static void levelup(org.bukkit.entity.Player p, float vol) {
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, vol, 0f);
+        }
+
+        private static void dragondie(org.bukkit.entity.Player p, float vol) {
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_DEATH, vol, 0f);
+        }
+
+        private static void anviluse(org.bukkit.entity.Player p, float vol) {
+            p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, vol, 0f);
+        }
     }
 
     int status;
@@ -102,6 +113,7 @@ public class GameManager {
     // 2 correct
     public Player drawer;
     String answer;
+    String trans;
     GameTimerTask timer;
     int timemax = 60;
     int timenow = 0;
@@ -121,14 +133,14 @@ public class GameManager {
 
     public UUID draweruidcache;
 
+    GameMode cachegamemode;
+
     Team team;
 
-    public GameManager(ArtForest plugin){
+    public GameManager(ArtForest plugin) {
         this.status = 0;
         this.plugin = plugin;
-        this.playmax = plugin.getConfig().getInt("playcount");
-        this.timemax = plugin.getConfig().getInt("playtime");
-        this.nextmax = plugin.getConfig().getInt("nexttime");
+        reloadConfig();
 
         this.barrunnable = new BarUpdateTask();
         barrunnable.runTaskTimer(plugin, 2, 2);
@@ -137,6 +149,12 @@ public class GameManager {
         boardrunnable.runTaskTimer(plugin, 20, 20);
 
         wordfile = plugin.getConfig().getString("wordfile");
+    }
+
+    void reloadConfig() {
+        this.playmax = plugin.getConfig().getInt("playcount");
+        this.timemax = plugin.getConfig().getInt("playtime");
+        this.nextmax = plugin.getConfig().getInt("nexttime");
     }
 
     String wordfile;
@@ -150,22 +168,27 @@ public class GameManager {
         this.team = team;
     }
 
-    public void init(ArtForest plugin){
+    public void init(ArtForest plugin) {
         reloadWord(plugin);
         resetPoints();
     }
 
-    void resetPoints(){
+    void resetPoints() {
         points = new HashMap<>();
     }
 
     private void reloadWord(ArtForest plugin) {
         words = new ArrayList<>();
-        words.addAll(Kei.a(new File(plugin.getDataFolder() + File.separator + wordfile)));
+        List<String> dummy = Kei.a(new File(plugin.getDataFolder() + File.separator + wordfile));
+        for (String str : dummy) {
+            words.add(
+                    str.replaceAll(str.substring(str.length() - 2), "").replaceAll("　", ":").replaceAll(" ", ":")
+            );
+        }
         Kei.out("words: " + words.size());
     }
 
-    private void giveArtset(Player p){
+    private void giveArtset(Player p) {
         Kei.a(p, GameMode.CREATIVE, true, plugin);
         Kei.cinv(p, false);
         p.getInventory().clear();
@@ -207,13 +230,14 @@ public class GameManager {
         return status == 1;
     }
 
-    public void Start(){
+    public void Start() {
         status = 1;
         resetPoints();
+        reloadConfig();
         bdrawer = Bukkit.createBossBar("Loading", BarColor.PINK, BarStyle.SEGMENTED_10);
         bplayer = Bukkit.createBossBar("Loading", BarColor.BLUE, BarStyle.SEGMENTED_10);
         bnext = Bukkit.createBossBar("Loading", BarColor.WHITE, BarStyle.SOLID);
-        for(Player p : Bukkit.getOnlinePlayers()){
+        for (Player p : Bukkit.getOnlinePlayers()) {
             points.put(p.getUniqueId(), 0);
         }
         Bukkit.getOnlinePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 100, true)));
@@ -221,82 +245,108 @@ public class GameManager {
     }
 
     public void Next() {
-        if(count >= playmax){
+        if (count >= playmax) {
             End();
         }
 
         bnext.removeAll();
 
-        if(status == 2) status = 1;
+        if (status == 2) status = 1;
         count++;
         List<Player> p2 = new ArrayList<>();
         for (OfflinePlayer player : getTeam().getPlayers()) {
-            if(player.isOnline()) p2.add((Player) player);
+            if (player.isOnline()) p2.add((Player) player);
         }
-        if(p2.size() < 1) {
-            status = 0; Kei.bc("書き手が見つかりませんでした。"); return;
+        if (p2.size() < 1) {
+            status = 0;
+            Kei.bc(GameMessage.NOTFOUNT_DRAWER.message);
+            return;
         }
         Collections.shuffle(p2);
         Player p = p2.get(0);
         timenow = 0;
-        if(p == null) { status = 0; Kei.bc("書き手が見つかりませんでした。"); return; }
+        if (p == null) {
+            status = 0;
+            Kei.bc(GameMessage.NOTFOUNT_DRAWER.message);
+            return;
+        }
         drawer = p;
-        answer = words.get(new Random().nextInt(words.size()));
+        cachegamemode = drawer.getGameMode();
+        String dummy = words.get(new Random().nextInt(words.size()));
+        answer = dummy.split("\t")[1];
+        trans = dummy.split("\t")[0];
         timer = new GameTimerTask(this);
         timer.runTaskTimer(this.plugin, 20, 20);
-        Kei.bc("次の書き手は" + p.getName() + "です。");
-        Kei.psm(p, "お題は" + answer + "です。");
+        Kei.bc(GameMessage.NEXTDRAWER.message.replaceAll("%player%", p.getName()));
+        Kei.psm(p, GameMessage.FIRSTANSWER.message.replaceAll("%answer%", trans));
         giveArtset(p);
     }
 
     public void End() {
-        count = 0;
-        timenow = 0;
-        drawer = null;
-        answer = null;
-        timer.cancel();
-        timer = null;
-        status = 0;
-        bnext.removeAll();
-        bplayer.removeAll();
-        bdrawer.removeAll();
-        Kei.bc("ゲーム終了！");
-        Bukkit.getOnlinePlayers().forEach(player -> player.removePotionEffect(PotionEffectType.INVISIBILITY));
         BoardUpdateTask.update();
-        List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(points.entrySet());
-        Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
-        int c = 1;
-        for(Map.Entry<UUID, Integer> entry : list_entries) {
-            Kei.bc(c + "位 " + Bukkit.getPlayer(entry.getKey()).getName() + " " + entry.getValue() + "pts");
-            c++;
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                count = 0;
+                timenow = 0;
+                drawer = null;
+                answer = null;
+                timer.cancel();
+                timer = null;
+                status = 0;
+                bnext.removeAll();
+                bplayer.removeAll();
+                bdrawer.removeAll();
+                Kei.bc(GameMessage.GAMEEND.message);
+                Bukkit.getOnlinePlayers().
+                        forEach(p2 -> Kei.t(p2, GameMessage.GAMEEND_TITLE.message, "", 20, 120, 20));
+                Bukkit.getOnlinePlayers().
+                        forEach(p2 -> sound.anviluse(p2, 0.43f));
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getOnlinePlayers().
+                                forEach(player -> player.removePotionEffect(PotionEffectType.INVISIBILITY));
+                    }
+                }.runTaskLater(plugin, 1);
+                List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(points.entrySet());
+                Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
+                int c = 1;
+                for (Map.Entry<UUID, Integer> entry : list_entries) {
+                    String s = GameMessage.PLACEMENT.message.replaceAll("%rank%", String.valueOf(c)).replaceAll("%player%", Bukkit.getPlayer(entry.getKey()).getName())
+                            .replaceAll("%point%", String.valueOf(entry.getValue()));
+                    Kei.bc(s);
+                    c++;
+                }
+            }
+        }.runTaskLater(plugin, 3);
     }
 
-    public void correct(Player p){
+    public void correct(Player p) {
         status = 2;
         int c = plugin.getConfig().getInt("nexttime");
         int l = timemax - timenow;
-        if(points.containsKey(p.getUniqueId())){
+        if (points.containsKey(p.getUniqueId())) {
             points.replace(p.getUniqueId(), points.get(p.getUniqueId()) + l);
         } else {
             points.put(p.getUniqueId(), l);
         }
-        if(points.containsKey(drawer.getUniqueId())){
+        if (points.containsKey(drawer.getUniqueId())) {
             points.replace(drawer.getUniqueId(), points.get(drawer.getUniqueId()) + l);
         } else {
             points.put(drawer.getUniqueId(), l);
         }
-        Kei.a(drawer, GameMode.SPECTATOR, true, plugin);
-        Bukkit.getOnlinePlayers().forEach(p2 -> Kei.t(p2, cc.aqua + "正解は" + answer + "！", "正解者: " + p.getName(), 20, 120, 20));
-        Bukkit.getOnlinePlayers().forEach(p2 -> sound.levelup(p2, 1));
-        Kei.bc("お題は" + answer + "でした。");
-        Kei.bc("正解者は" + p.getName() + "でした。");
-        Kei.bc("正解者,書き手に" + l + "ポイント追加されます。");
-        Kei.bc(c + "秒後に次のゲームが開始します。");
-        if(count >= playmax){
+        Kei.a(drawer, cachegamemode, true, plugin);
+        Kei.bc(GameMessage.GAMEEND_ANSWER1.message.replaceAll("%answer%", trans));
+        Kei.bc(GameMessage.GAMEEND_ANSWER2.message.replaceAll("%player%", p.getName()));
+        Kei.bc(GameMessage.GAMEEND_ANSWER3.message.replaceAll("%point%", String.valueOf(l)));
+        if (count >= playmax) {
             End();
             return;
         }
+        Bukkit.getOnlinePlayers().forEach(p2 -> Kei.t(p2, GameMessage.GAMEENDTITLE_ANSWER1.message.replaceAll("%answer%", trans), GameMessage.GAMEENDTITLE_ANSWER2.message.replaceAll("%player%", p.getName()), 20, 120, 20));
+        Bukkit.getOnlinePlayers().forEach(p2 -> sound.levelup(p2, 1));
+        Kei.bc(GameMessage.REMAINNEXT.message.replaceAll("%s%", String.valueOf(c)));
         new NewWaveTask(this.plugin, c).runTaskTimer(this.plugin, 20, 20);
     }
 
@@ -311,36 +361,36 @@ public class GameManager {
     public void Wrong() {
         status = 2;
         int c = plugin.getConfig().getInt("nexttime");
-        Kei.a(drawer, GameMode.SPECTATOR, true, plugin);
-        Bukkit.getOnlinePlayers().forEach(p -> Kei.t(p, cc.aqua + "時間切れ！", "正解者はいませんでした", 20, 120, 20));
-        Bukkit.getOnlinePlayers().forEach(p2 -> sound.levelup(p2, 1));
-        Kei.bc("正解者はいませんでした。");
-        Kei.bc(c + "秒後に次のゲームが開始します。");
-        if(count >= playmax){
+        Kei.a(drawer, cachegamemode, true, plugin);
+        Kei.bc(GameMessage.GAMEEND_WRONG.message);
+        if (count >= playmax) {
             End();
             return;
         }
+        Bukkit.getOnlinePlayers().forEach(p -> Kei.t(p, GameMessage.GAMEENDTITLE_WRONG1.message, GameMessage.GAMEENDTITLE_WRONG2.message, 20, 120, 20));
+        Bukkit.getOnlinePlayers().forEach(p2 -> sound.levelup(p2, 1));
+        Kei.bc(GameMessage.REMAINNEXT.message.replaceAll("%s%", String.valueOf(c)));
         new NewWaveTask(this.plugin, c).runTaskTimer(this.plugin, 20, 20);
     }
 
-    public void updateBossbar(){
-        if(status == 1) {
-            String title = "残り: "+ (timemax - timenow) + "秒 書き手: " + drawer.getName() + " お題: %answer%";
-            bdrawer.setProgress(1.0d-((double) timenow / timemax));
-            bplayer.setProgress(1.0d- ((double) timenow / timemax));
-            bdrawer.setTitle(title.replaceAll("%answer%", answer));
+    public void updateBossbar() {
+        if (status == 1) {
+            String title = "残り: " + (timemax - timenow) + "秒 書き手: " + drawer.getName() + " お題: %answer%";
+            bdrawer.setProgress(1.0d - ((double) timenow / timemax));
+            bplayer.setProgress(1.0d - ((double) timenow / timemax));
+            bdrawer.setTitle(title.replaceAll("%answer%", trans));
             bplayer.setTitle(title.replaceAll("%answer%", "???"));
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (drawer.getUniqueId().equals(p.getUniqueId())) {
-                    if(bplayer.getPlayers().contains(p)) bplayer.removePlayer(p);
+                    if (bplayer.getPlayers().contains(p)) bplayer.removePlayer(p);
                     if (!bdrawer.getPlayers().contains(p)) bdrawer.addPlayer(p);
                 } else {
-                    if(bdrawer.getPlayers().contains(p)) bdrawer.removePlayer(p);
-                    if(!bplayer.getPlayers().contains(p)) bplayer.addPlayer(p);
+                    if (bdrawer.getPlayers().contains(p)) bdrawer.removePlayer(p);
+                    if (!bplayer.getPlayers().contains(p)) bplayer.addPlayer(p);
                 }
             }
-        } else if (status == 2){
-            String title = "残り: "+ (ArtForest.getgm().nextmax - ArtForest.getgm().nextcount) + "秒 書き手: " + drawer.getName() + " お題: " + answer;
+        } else if (status == 2) {
+            String title = "残り: " + (ArtForest.getgm().nextmax - ArtForest.getgm().nextcount) + "秒 書き手: " + drawer.getName() + " お題: " + trans;
             bdrawer.removeAll();
             bplayer.removeAll();
             bnext.setTitle(title);
@@ -350,11 +400,11 @@ public class GameManager {
     }
 
     public void clearBoss() {
-        if(!barrunnable.isCancelled()) barrunnable.cancel();
-        if(!boardrunnable.isCancelled()) boardrunnable.cancel();
+        if (!barrunnable.isCancelled()) barrunnable.cancel();
+        if (!boardrunnable.isCancelled()) boardrunnable.cancel();
 
-        if(bdrawer != null) bdrawer.removeAll();
-        if(bplayer != null) bplayer.removeAll();
-        if(bnext != null) bnext.removeAll();
+        if (bdrawer != null) bdrawer.removeAll();
+        if (bplayer != null) bplayer.removeAll();
+        if (bnext != null) bnext.removeAll();
     }
 }

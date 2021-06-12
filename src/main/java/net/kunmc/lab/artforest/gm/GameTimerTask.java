@@ -28,11 +28,11 @@ public class GameTimerTask extends BukkitRunnable {
         if(!gm.Playing()){
             this.cancel();
         }
-        ArtForest.getgm().updateBossbar();
-        gm.timenow += 1;
         if(gm.timenow >= gm.timemax){
             gm.Wrong();
             this.cancel();
         }
+        ArtForest.getgm().updateBossbar();
+        gm.timenow += 1;
     }
 }

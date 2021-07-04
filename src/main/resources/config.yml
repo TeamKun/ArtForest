@@ -6,3 +6,5 @@ playtime: 240
 nexttime: 20
 # ワードが保存してあるファイル
 wordfile: "word.txt"
+# 透明化有効範囲
+invrange: 10

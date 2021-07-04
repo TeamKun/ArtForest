@@ -121,6 +121,7 @@ public class GameManager {
     int nextcount = 0;
     int nextmax = 10;
     int playmax;
+    int invrange;
     ArtForest plugin;
     HashMap<UUID, Integer> points;
 
@@ -149,12 +150,15 @@ public class GameManager {
         boardrunnable.runTaskTimer(plugin, 20, 20);
 
         wordfile = plugin.getConfig().getString("wordfile");
+
+        new InvisibleTask(plugin).runTaskTimer(plugin, 20, 20);
     }
 
     void reloadConfig() {
         this.playmax = plugin.getConfig().getInt("playcount");
         this.timemax = plugin.getConfig().getInt("playtime");
         this.nextmax = plugin.getConfig().getInt("nexttime");
+        this.invrange = plugin.getConfig().getInt("invrange");
     }
 
     String wordfile;
@@ -230,6 +234,10 @@ public class GameManager {
         return status == 1;
     }
 
+    public boolean Playing2() {
+        return status == 1;
+    }
+
     public void Start() {
         status = 1;
         resetPoints();
@@ -240,7 +248,7 @@ public class GameManager {
         for (Player p : Bukkit.getOnlinePlayers()) {
             points.put(p.getUniqueId(), 0);
         }
-        Bukkit.getOnlinePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 100, true)));
+        //Bukkit.getOnlinePlayers().forEach(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 100, true)));
         Next();
     }
 
@@ -302,6 +310,7 @@ public class GameManager {
                         forEach(p2 -> Kei.t(p2, GameMessage.GAMEEND_TITLE.message, "", 20, 120, 20));
                 Bukkit.getOnlinePlayers().
                         forEach(p2 -> sound.anviluse(p2, 0.43f));
+                /*
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -309,6 +318,7 @@ public class GameManager {
                                 forEach(player -> player.removePotionEffect(PotionEffectType.INVISIBILITY));
                     }
                 }.runTaskLater(plugin, 1);
+                */
                 List<Map.Entry<UUID, Integer>> list_entries = new ArrayList<Map.Entry<UUID, Integer>>(points.entrySet());
                 Collections.sort(list_entries, (obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
                 int c = 1;

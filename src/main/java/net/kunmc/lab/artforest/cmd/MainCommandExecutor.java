@@ -104,10 +104,12 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
                     "nexttime: " + plugin.getConfig().get("nexttime"),
                     "playtime: " + plugin.getConfig().get("playtime"),
                     "playcount: " + plugin.getConfig().get("playcount"),
+                    "invrange: " + plugin.getConfig().get("invrange"),
                     "===========",
                     "nexttime: 次のゲームまでの待機時間",
                     "playtime: 絵を書く時間",
                     "playcount: 絵を書く回数(ゲーム回数)",
+                    "invrange: 透明化有効範囲",
                     "===========");
             return true;
         } else if(Kei.agc(args, 1, "nexttime")) {
@@ -136,6 +138,16 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
                 plugin.getConfig().set("playcount", i);
                 plugin.saveConfig();
                 Kei.sm(sender, "playcountを" + i + "に変更しました。");
+            } catch (Exception ex){
+                Kei.sm(sender, "第二引数には数値(整数)を入力してください。");
+            }
+            return true;
+        } else if(Kei.agc(args, 1, "invrange")) {
+            try {
+                Integer i = Integer.parseInt(args[2]);
+                plugin.getConfig().set("invrange", i);
+                plugin.saveConfig();
+                Kei.sm(sender, "invrangeを" + i + "に変更しました。");
             } catch (Exception ex){
                 Kei.sm(sender, "第二引数には数値(整数)を入力してください。");
             }
@@ -180,7 +192,7 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
                 return r;
             } else if(args[0].equals("config")){
                 List<String> r = new ArrayList<>();
-                for (String s : Arrays.asList("check", "nexttime", "playtime", "playcount")) {
+                for (String s : Arrays.asList("check", "nexttime", "playtime", "playcount", "invrange")) {
                     if (s.startsWith(args[1])) r.add(s);
                 }
                 return r;
@@ -197,7 +209,7 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
                     return r;
                 }
             } else if(args[0].equals("config")){
-                if(args[1].equals("nexttime") || args[1].equals("playtime") || args[1].equals("playcount")) {
+                if(args[1].equals("nexttime") || args[1].equals("playtime") || args[1].equals("invrange") || args[1].equals("playcount")) {
                     if(args.length < 4) // /af config XX [int]
                     return Collections.singletonList("[int]");
                 }
